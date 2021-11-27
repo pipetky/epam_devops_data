@@ -133,9 +133,7 @@ file_name1.textdoc в file_name1.txt<br/>
 [superadmin@localhost ~]$ touch ~/file_name{1..3}.md
 [superadmin@localhost ~]$ ls
 file_name1.md  file_name2.md  file_name3.md
-[superadmin@localhost ~]$ mv file_name1.md file_name1.textdoc
-[superadmin@localhost ~]$ mv file_name2.md file_name2
-[superadmin@localhost ~]$ mv file_name3.md file_name3.md.latest
+[superadmin@localhost ~]$ rename .md {.textdoc,,.latest} file_name*
 [superadmin@localhost ~]$ mv file_name1.textdoc file_name1.txt
 [superadmin@localhost ~]$ ls
 file_name1.txt  file_name2  file_name3.md.latest
@@ -208,7 +206,7 @@ data06  data13  data20  data27  data34  data41  data48  data55  data62  data69  
 if [[ $(ls processed/ | wc -l) -eq $(ls new/ | wc -l) ]]; then rm new/*; fi
 ```
 
-7. \* Получить разворачивание фигурных скобок для выражения. Согласно стандартному поведению bash, стандартного для CentOS 7, скобки в приведённом ниже выражении развёрнуты не будут. Необходимо найти способ получить ожидаемый вывод.
+7. \* Получить разворачивание фигурных скобок для выражения. Согласно стандартному поведению bash, стандартного для <br/>CentOS 7, скобки в приведённом ниже выражении развёрнуты не будут. Необходимо найти способ получить ожидаемый вывод.
 a=1; b=3
 echo file{$a..$b}
 Необходимо предоставить модицицированную команду, результатом которой является следующий вывод: 
