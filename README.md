@@ -1,6 +1,6 @@
 # Homework 1
 
-Please check my homeword.md file
+Please check my homework.md file
 
 ## Tasks
 0. Установить вторую ВМ, настроить на ней только внутренний сетевой интерфейс и подключиться с первой машины.
