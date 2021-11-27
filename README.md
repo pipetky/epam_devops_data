@@ -1,4 +1,4 @@
-# Homework 1
+# Homework №1
 
 Please check my homework.md file
 
