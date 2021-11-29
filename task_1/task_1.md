@@ -2,15 +2,7 @@
 Используя команду ls, необходимо вывести на экран все файлы, которые расположены в секционных директориях /usr/share/man/manX и содержат слово "config" в имени. Одним вызовом ls найти все файлы, содержащие слово "system" в каталогах /usr/share/man/man1 и /usr/share/man/man7
 **Ответ:**
 ```
-[superadmin@localhost ~]$ ls /usr/share/man/man[0-9]/*config*
-/usr/share/man/man1/pkg-config.1.gz      /usr/share/man/man5/x509v3_config.5ssl.gz  /usr/share/man/man8/lvm-config.8.gz
-/usr/share/man/man5/config.5ssl.gz       /usr/share/man/man8/authconfig.8.gz        /usr/share/man/man8/lvmconfig.8.gz
-/usr/share/man/man5/config-util.5.gz     /usr/share/man/man8/authconfig-tui.8.gz    /usr/share/man/man8/lvm-dumpconfig.8.gz
-/usr/share/man/man5/selinux_config.5.gz  /usr/share/man/man8/chkconfig.8.gz         /usr/share/man/man8/sg_get_config.8.gz
-/usr/share/man/man5/ssh_config.5.gz      /usr/share/man/man8/grub2-mkconfig.8.gz    /usr/share/man/man8/sys-unconfig.8.gz
-/usr/share/man/man5/sshd_config.5.gz     /usr/share/man/man8/iprconfig.8.gz
-
-[superadmin@localhost ~]$ ls /usr/share/man/man[[:digit:]]/*config*
+[superadmin@localhost ~]$ ls /usr/share/man/man?/*config*
 /usr/share/man/man1/pkg-config.1.gz      /usr/share/man/man5/ssh_config.5.gz        /usr/share/man/man8/authconfig-tui.8.gz  /usr/share/man/man8/lvm-config.8.gz      /usr/share/man/man8/sys-unconfig.8.gz
 /usr/share/man/man5/config.5ssl.gz       /usr/share/man/man5/sshd_config.5.gz       /usr/share/man/man8/chkconfig.8.gz       /usr/share/man/man8/lvmconfig.8.gz
 /usr/share/man/man5/config-util.5.gz     /usr/share/man/man5/x509v3_config.5ssl.gz  /usr/share/man/man8/grub2-mkconfig.8.gz  /usr/share/man/man8/lvm-dumpconfig.8.gz
