@@ -1,0 +1,8 @@
+ENVIRONMENT VARIABLES
+       The AWKPATH environment variable can be used to provide a list of directories that gawk searches when looking for files named via the -f and --file options.
+
+       For socket communication, two special environment variables can be used to control the number of retries (GAWK_SOCK_RETRIES), and the interval between retries (GAWK_MSEC_SLEEP).  The interval is  in
+       milliseconds. On systems that do not support usleep(3), the value is rounded up to an integral number of seconds.
+
+       If  POSIXLY_CORRECT  exists  in  the environment, then gawk behaves exactly as if --posix had been specified on the command line.  If --lint has been specified, gawk issues a warning message to this
+       effect.
