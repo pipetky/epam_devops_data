@@ -10,24 +10,42 @@ superadmin@PipetkyBook:~/epam_devops_data/homework.5-6$ awk -F\" '{seen[$6]++}EN
 2. Show number of requests per month for ip 216.244.66.230 (for example: Sep 2016 - 100500 reqs, Oct 2016 - 0 reqs, Nov 2016 - 2 reqs...)<br/>
 **Ответ:**
 ```
-awk '$1=="216.244.66.230" {gsub(/\//, " ", $4); reqs[substr($4, 5, 8)]++}END{for (i in reqs) print i, "-"reqs[i]" reqs"}' access.log
+superadmin@PipetkyBook:~/epam_devops_data/homework.5-6$ awk '$1=="216.244.66.230" {gsub(/\//, " ", $4); reqs[substr($4, 5, 8)]++}END{for (i in reqs) print i, "-"reqs[i]" reqs"}' access.log
+Feb 2021 -14 reqs
+Dec 2020 -1 reqs
+Nov 2021 -106 reqs
+May 2021 -27 reqs
+Jul 2021 -23 reqs
+Oct 2021 -23 reqs
+Apr 2021 -34 reqs
+Jun 2021 -3 reqs
+Sep 2021 -7 reqs
+Jan 2021 -43 reqs
+Dec 2021 -5 reqs
+Mar 2021 -2 reqs
+Aug 2021 -108 reqs
 ```
 3. Show total amount of data which server has provided for each unique ip (i.e. 100500 bytes for 1.2.3.4; 9001 bytes for 5.4.3.2 and so on)<br/>
 **Ответ:**
 ```
-awk  '{data[$1]+=$10}END{for (i in data) print data[i] " bytes", "for " i}' access.log 
+superadmin@PipetkyBook:~/epam_devops_data/homework.5-6$ awk  '{data[$1]+=$10}END{for (i in data) print data[i] " bytes", "for " i}' access.log |head -n 5
+55659696 bytes for 96.55.233.248
+133930511 bytes for 45.120.49.66
+11871936 bytes for 138.186.137.168
+226 bytes for 162.55.223.199
+10439 bytes for 194.195.117.205 
 ```
 
 ### Sed
 1. Change all browsers to "lynx"<br/>
 **Ответ:**
 ```
-superadmin@PipetkyBook:~/epam_devops_data/homework.5-6$ sed -E 's/"-" "[^"]*/"-" "lynx/' access.log |head -n 5
-
+superadmin@PipetkyBook:~/epam_devops_data/homework.5-6$ sed -E 's/"[^"]*/"lynx/5' access.log |head -n 5
 13.66.139.0 - - [19/Dec/2020:13:57:26 +0100] "GET /index.php?option=com_phocagallery&view=category&id=1:almhuette-raith&Itemid=53 HTTP/1.1" 200 32653 "-" "lynx" "-"
 157.48.153.185 - - [19/Dec/2020:14:08:06 +0100] "GET /apache-log/access.log HTTP/1.1" 200 233 "-" "lynx" "-"
-157.48.153.185 - - [19/Dec/2020:14:08:08 +0100] "GET /favicon.ico HTTP/1.1" 404 217 "http://www.almhuette-raith.at/apache-log/access.log" "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36" "-"
+157.48.153.185 - - [19/Dec/2020:14:08:08 +0100] "GET /favicon.ico HTTP/1.1" 404 217 "http://www.almhuette-raith.at/apache-log/access.log" "lynx" "-"
 216.244.66.230 - - [19/Dec/2020:14:14:26 +0100] "GET /robots.txt HTTP/1.1" 200 304 "-" "lynx" "-"
+54.36.148.92 - - [19/Dec/2020:14:16:44 +0100] "GET /index.php?option=com_phocagallery&view=category&id=2%3Awinterfotos&Itemid=53 HTTP/1.1" 200 30662 "-" "lynx" "-"
 ```
 2. Masquerade all ip addresses. Rewrite file.<br/>
 **Ответ:**
