@@ -59,7 +59,7 @@ x.x.x.x - - [19/Dec/2020:14:14:26 +0100] "GET /robots.txt HTTP/1.1" 200 304 "-" 
 ```
 ### Extra (*)<br/>
 Show list of unique ips, who made more then 50 requests to the same url within 10 minutes (for example too many requests to "/")
-**Ответ:**
+**Ответ:**<br/>
 It works for 5-10 minutes, and loads cpu.<br/>
 ```
 superadmin@PipetkyBook:~/epam_devops_data/homework.5-6$ sed -E "/\[/s/:/ /; /\[/s/\//-/; /\[/s/\//-/"  access.log | awk  '{ts="\""substr($4" "$5, 2, 17)"\""; ("date +%s -d "ts)| getline epochsec; print $1, (epochsec/60), $8}' | awk '{reqs[$1" "$3" "$2]++}END{for ( i in reqs)  if (reqs[i]>=50) print i, " "reqs[i]}' | awk '{result[$1" to \""$2"\""]+=$4}END{for (i in result) print "from "i" - "result[i] " requests" }' | head -n 10
