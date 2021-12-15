@@ -31,10 +31,10 @@ passwd: all authentication tokens updated successfully.
 Новые аккаунты группы sales должны истечь по окончанию 90 
 дней срока, а bob должен изменять его пароль каждые 15 
 дней.
-** С такой формулировкой сделать невозможно или я не знаю как, делаю с такой: 
+*!!!* С такой формулировкой сделать невозможно или я не знаю как, делаю с такой: 
 Все существующие аккаунты группы sales должны истечь по окончанию 90 
 дней срока, а bob должен изменять его пароль каждые 15 
-дней. **
+дней.
 ```
 [root@localhost superadmin]# for user in $(grep 4000 /etc/passwd | awk -F: '{print $1}') ;do usermod -e  $(date +"%Y-%m-%d" -d "+90 days") $user; done
 [root@localhost superadmin]# chage -M 15 bob
