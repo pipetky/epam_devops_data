@@ -1,8 +1,8 @@
 ### Task 1:
 #### As a result of each point, you should provide a corresponding command.
-localhost - your CentOS VM running in VirtualBox
-remotehost - 18.221.144.175 (public IP)
-webserver - 172.31.45.237 (private IP)
+localhost - your CentOS VM running in VirtualBox  
+remotehost - 18.221.144.175 (public IP)  
+webserver - 172.31.45.237 (private IP)  
 1.1. SSH to remotehost using username and password provided to you in Slack. Log
 out from remotehost.
 ```
