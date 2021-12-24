@@ -513,12 +513,14 @@ ckager superadmin
     [ "%{buildarch}" = "noarch" ] || QA_CHECK_RPATHS=1 ; \
     case "${QA_CHECK_RPATHS:-}" in [1yY]*) /usr/lib/rpm/check-rpaths ;; esac \
     /usr/lib/rpm/check-buildroot
-
+```
+```
 [root@localhost rpmbuild]# ls /root/rpmbuild/SOURCES/homework7/
 homework7.sh  textfile.txt
 [root@localhost rpmbuild]# cd /root/rpmbuild/SOURCES/
 [root@localhost SOURCES]# tar czf homework7.tar.gz homework7-1
-
+```
+```
 [root@localhost rpmbuild]# cat SPECS/homework7.spec 
 Name:           homework7
 Version:        1
@@ -551,8 +553,8 @@ install -m 0755 homework7.sh $RPM_BUILD_ROOT/etc/homework7/homework7.sh
 * Tue Dec 24 2021 Alexandr Karabchevskiy  1.0.0
   - Initial rpm release
 
-
-
+```
+```
 [root@localhost rpmbuild]# rpmbuild -ba SPECS/homework7.spec
 warning: bogus date in %changelog: Tue Dec 24 2021 Alexandr Karabchevskiy  1.0.0
 Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.PCch4R
@@ -608,8 +610,8 @@ Executing(%clean): /bin/sh -e /var/tmp/rpm-tmp.9rfWUc
 + cd homework7-1
 + /usr/bin/rm -rf /root/rpmbuild/BUILDROOT/homework7-1-0.x86_64
 + exit 0
-
-
+```
+```
 [root@localhost rpmbuild]# rpm -qi -p RPMS/noarch/homework7-1-0.noarch.rpm 
 Name        : homework7
 Version     : 1
@@ -628,7 +630,8 @@ URL         : git@github.com:pipetky/epam_devops_data.git
 Summary     : A Bash Script for homework #7
 Description :
 The script outputs words count stored in file.
-
+```
+```
 [root@localhost rpmbuild]# rpm -ivh RPMS/noarch/homework7-1-0.noarch.rpm 
 Preparing...                          ################################# [100%]
 Updating / installing...
