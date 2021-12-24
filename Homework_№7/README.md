@@ -307,6 +307,7 @@ Removed:
   nginx.x86_64 1:1.20.2-1.el7.ngx                                                                                                                                                                     
 
 Complete!
+```
 4. Disable NGINX repository.
 ```
 [root@localhost superadmin]# sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/nginx.repo
