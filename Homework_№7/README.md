@@ -261,6 +261,7 @@ Installed:
 Complete!
 ```
 3. Check yum history and undo NGINX installation.
+```
 [root@localhost superadmin]# yum history list all
 Loaded plugins: fastestmirror
 ID     | Login user               | Date and time    | Action(s)      | Altered
