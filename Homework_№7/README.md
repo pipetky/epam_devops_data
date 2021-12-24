@@ -349,6 +349,7 @@ Removed:
 Complete!
 ```
 6. Install EPEL repository and get information about it.
+```
 [root@localhost superadmin]# yum install epel-release -y
 Loaded plugins: fastestmirror
 Loading mirror speeds from cached hostfile
@@ -427,7 +428,7 @@ License     : GPLv2
 Description : This package contains the Extra Packages for Enterprise Linux (EPEL) repository
             : GPG key as well as configuration for yum.
 
-
+```
 7. Find how much packages provided exactly by EPEL repository.
 ```
 [root@localhost superadmin]# yum --disablerepo="*" --enablerepo="epel" list available |wc -l
