@@ -136,7 +136,7 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 ```
 4. run tcpdump and request any http site in separate session. Find HTTP request and answer packets with ASCII data in it.  Tcpdump command must be as strict as possible to capture only needed packages for this http request.
 ```
-[root@localhost superadmin]# tcpdump -A  'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+[root@localhost superadmin]# tcpdump -A dst 192.168.3.140 or src 192.168.3.140 and  'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 05:28:28.722391 IP localhost.localdomain.50148 > wikiadmin.p-c.ru.http: Flags [P.], seq 3873676030:3873676107, ack 1047239806, win 229, options [nop,nop,TS val 4242082 ecr 3118782795], length 77: HTTP: GET / HTTP/1.1
