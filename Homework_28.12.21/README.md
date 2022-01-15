@@ -115,7 +115,7 @@ add_drivers+=" zfs "
 -rw-r--r--   1 root     root          158 Nov 12  2018 usr/lib/modules-load.d/zfs.conf
 
 ```
-3. Explain the difference between ordinary and rescue initrd images.
+3. Explain the difference between ordinary and rescue initrd images.<br>
 Rescue images are made with --no-hostonly option, and with 'rescue' module added.
 
 ## Selinux
