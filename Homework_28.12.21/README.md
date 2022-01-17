@@ -189,8 +189,9 @@ public (active)
 ```
 [root@localhost superadmin]# systemctl stop firewalld
 [root@localhost superadmin]# iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-[root@localhost superadmin]# iptables -A INPUT -s 192.168.0.0/22 -i eth0 -p tcp --dport 22 -j ACCEPT[root@localhost superadmin]# iptables -L INPUT -v -n
+[root@localhost superadmin]# iptables -A INPUT -s 192.168.0.0/22 -i eth0 -p tcp --dport 22 -j ACCEPT
 [root@localhost superadmin]# iptables -P INPUT DROP 
+[root@localhost superadmin]# iptables -L INPUT -v -n
 Chain INPUT (policy DROP 148 packets, 22646 bytes)
  pkts bytes target     prot opt in     out     source               destination         
   264 25000 ACCEPT     tcp  --  eth0   *       192.168.0.0/22       0.0.0.0/0            tcp dpt:22
