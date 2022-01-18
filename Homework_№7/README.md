@@ -76,55 +76,7 @@ The cifsiostat command reports I/O statistics for CIFS file systems.
 ```
 3. Install sysstat package and get information about files installed by this package.
 ```
-[root@localhost superadmin]# yum localinstall sysstat-10.1.5-19.el7.x86_64.rpm  -y
-Loaded plugins: fastestmirror
-Examining sysstat-10.1.5-19.el7.x86_64.rpm: sysstat-10.1.5-19.el7.x86_64
-Marking sysstat-10.1.5-19.el7.x86_64.rpm to be installed
-Resolving Dependencies
---> Running transaction check
----> Package sysstat.x86_64 0:10.1.5-19.el7 will be installed
---> Processing Dependency: libsensors.so.4()(64bit) for package: sysstat-10.1.5-19.el7.x86_64
-Loading mirror speeds from cached hostfile
- * base: centos-mirror.rbc.ru
- * extras: mirrors.powernet.com.ru
- * updates: mirror.awanti.com
---> Running transaction check
----> Package lm_sensors-libs.x86_64 0:3.4.0-8.20160601gitf9185e5.el7 will be installed
---> Finished Dependency Resolution
-
-Dependencies Resolved
-
-======================================================================================================================================================================================================
- Package                                   Arch                             Version                                                     Repository                                               Size
-======================================================================================================================================================================================================
-Installing:
- sysstat                                   x86_64                           10.1.5-19.el7                                               /sysstat-10.1.5-19.el7.x86_64                           1.1 M
-Installing for dependencies:
- lm_sensors-libs                           x86_64                           3.4.0-8.20160601gitf9185e5.el7                              base                                                     42 k
-
-Transaction Summary
-======================================================================================================================================================================================================
-Install  1 Package (+1 Dependent package)
-
-Total size: 1.2 M
-Installed size: 1.2 M
-Downloading packages:
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  Installing : lm_sensors-libs-3.4.0-8.20160601gitf9185e5.el7.x86_64                                                                                                                              1/2 
-  Installing : sysstat-10.1.5-19.el7.x86_64                                                                                                                                                       2/2 
-  Verifying  : sysstat-10.1.5-19.el7.x86_64                                                                                                                                                       1/2 
-  Verifying  : lm_sensors-libs-3.4.0-8.20160601gitf9185e5.el7.x86_64                                                                                                                              2/2 
-
-Installed:
-  sysstat.x86_64 0:10.1.5-19.el7                                                                                                                                                                      
-
-Dependency Installed:
-  lm_sensors-libs.x86_64 0:3.4.0-8.20160601gitf9185e5.el7                                                                                                                                             
-
-Complete!
+[root@localhost superadmin]# rpm -i sysstat-10.1.5-19.el7.x86_64.rpm
 
 ```
 ```
@@ -697,7 +649,25 @@ total 20
 [root@localhost /]# df -h |grep " \/$"
 /dev/mapper/centos-root   28G  1.8G   27G   7% /
 ```
-There is no difference.  
+There is no difference.  <br>
+
+**Some time later:**
+```
+[root@localhost /]# du -h 2>/dev/null | tail -n 1
+2.0G	.
+[root@localhost /]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                 1.9G     0  1.9G   0% /dev
+tmpfs                    1.9G     0  1.9G   0% /dev/shm
+tmpfs                    1.9G  8.5M  1.9G   1% /run
+tmpfs                    1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/centos-root   29G  1.8G   27G   7% /
+/dev/vda1                1.9G   33M  1.9G   2% /backup
+/dev/sda1               1014M  215M  800M  22% /boot
+tmpfs                    379M     0  379M   0% /run/user/1000
+```
+There is a difference becuase of to boot partition 215M
+
 
 5. Check disk space usage of /var/log directory using ncdu
 ```
