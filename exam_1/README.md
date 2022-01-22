@@ -273,6 +273,9 @@ success
 [exam@headnode ~]$ sudo firewall-cmd --zone=public --permanent --add-port=8088/tcp
 success
 [exam@headnode ~]$ sudo firewall-cmd --reload
+[exam@worker ~]$ sudo firewall-cmd --zone=public --permanent --add-port=9864/tcp
+success
+[exam@worker ~]$ sudo firewall-cmd --reload
 ```
 29. Настроить управление запуском каждого компонента Hadoop при помощи systemd (используя юниты-сервисы).
 ```

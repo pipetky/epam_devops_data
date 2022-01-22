@@ -5,6 +5,11 @@
   remote_user: exam
   become: true
   tasks:
+  - name: debug
+    ansible.builtin.debug:
+      msg: "{{ item }} worker"
+    with_inventory_hostnames:
+    - worker
   - name: Install wget and openjdk8
     yum:
       name: "{{ packages }}"
@@ -117,7 +122,7 @@
       owner: root
       group: root
     with_inventory_hostnames:
-    - all:headnode
+    - headnode
   - name: Add worker to hosts
     lineinfile:
       path: /etc/hosts
@@ -126,7 +131,7 @@
       owner: root
       group: root
     with_inventory_hostnames:
-    - all:worker
+    - worker
 
   - name: Download hadoop-env.sh,core-site.xml,hdfs-site.xml,yarn-site.xml
     get_url:
@@ -190,7 +195,18 @@
       line: HADOOP_HOME=/usr/local/hadoop/current
       owner: root
       group: root
-
+  - name: Create hadoop logs dir in /var/log/hadoop
+    ansible.builtin.file:
+      path: /var/log/hadoop
+      state: directory
+      owner: hadoop
+      group: hadoop
+      mode: '0775'
+  - name: Set hadoop logs dir to /var/log/hadoop in hadoop-env.sh
+    ansible.builtin.lineinfile:
+      path: /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh
+      regexp: '^# export HADOOP_LOG_DIR'
+      line: export HADOOP_LOG_DIR=/var/log/hadoop
 
 
 
@@ -220,18 +236,6 @@
       key: "{{ lookup('file', '/tmp/fetched/{{ item }}/home/hadoop/.ssh/id_rsa.pub') }}"
     with_inventory_hostnames:
     - all:worker
-  - name: Create hadoop logs dir in /var/log/hadoop
-    ansible.builtin.file:
-      path: /var/log/hadoop
-      state: directory
-      owner: hadoop
-      group: hadoop
-      mode: '0775'
-  - name: Set hadoop logs dir to /var/log/hadoop in hadoop-env.sh
-    ansible.builtin.lineinfile:
-      path: /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh
-      regexp: '^# export HADOOP_LOG_DIR'
-      line: export HADOOP_LOG_DIR=/var/log/hadoop
   - name: Format HDFS as hdfs user
     command: echo Y | /usr/local/hadoop/current/bin/hdfs namenode -format cluster1
     become: yes
@@ -322,3 +326,10 @@
     loop:
     - datanode
     - nodemanager
+  - name: Allow incoming trafic to 8088 and 9870 tcp ports
+    ansible.posix.firewalld:
+      port: "{{ item }}/tcp"
+      permanent: yes
+      state: enabled
+    loop:
+    - 9864
