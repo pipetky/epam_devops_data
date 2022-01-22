@@ -1,0 +1,13 @@
+[Unit]
+Description=Hadoop namenode
+After=network.target network-online.target
+
+[Service]
+User=hdfs
+Group=hadoop
+Type=fork
+ExecStart=/usr/local/hadoop/current/bin/hdfs namenode
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

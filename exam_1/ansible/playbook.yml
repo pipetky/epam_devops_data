@@ -1,0 +1,324 @@
+---
+- hosts: 
+   - hadoop
+  gather_facts: yes
+  remote_user: exam
+  become: true
+  tasks:
+  - name: Install wget and openjdk8
+    yum:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - wget
+      - java-1.8.0-openjdk
+  - name: Download hadoop-3.1.2.tar.gz
+    get_url:
+      url: https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
+      dest: /home/exam/
+  - name: Extract hadoop-3.1.2.tar.gz into /opt/hadoop-3.1.2/
+    ansible.builtin.unarchive:
+      src: /home/exam/hadoop-3.1.2.tar.gz
+      dest: /opt/
+      remote_src: yes
+  - name: Create /usr/local/hadoop/ directory
+    ansible.builtin.file:
+      dest: /usr/local/hadoop/
+      state: directory
+  - name: Create a symbolic link /usr/local/hadoop/current/ to /opt/hadoop-3.1.2/
+    ansible.builtin.file:
+      src: /opt/hadoop-3.1.2/
+      dest: /usr/local/hadoop/current
+      state: link
+  - name: Ensure group "hadoop" exists
+    group:
+      name: hadoop
+      state: present
+  - name: Add users 'hadoop', 'hdfs' and 'yarn' with a primary group of 'hadoop'
+    ansible.builtin.user:
+      name: "{{ item }}"
+      group: hadoop
+    loop:
+    - hadoop
+    - yarn
+    - hdfs
+
+  - name: Create a new primary partition for LVM on /dev/vdb and /dev/vdc
+    community.general.parted:
+      device: "{{ item }}"
+      number: 1
+      flags: [ lvm ]
+      state: present
+      part_start: "0%"
+      part_end: "100%"
+    loop:
+    - /dev/vdb
+    - /dev/vdc
+
+  - name: Create a volume group on top of /dev/vdb1 and resize the volume group /dev/vdb1 to the maximum possible
+    community.general.lvg:
+      vg: vg1
+      pvs: /dev/vdb1
+      pvresize: yes
+  - name: Create a volume group on top of /dev/vdc1 and resize the volume group /dev/vdc1 to the maximum possible
+    community.general.lvg:
+      vg: vg2
+      pvs: /dev/vdc1
+      pvresize: yes
+  - name: Create a logical volume lv1 the size of all remaining space in the volume group vg1
+    community.general.lvol:
+      vg: vg1
+      lv: lv1
+      size: 100%FREE
+      shrink: no
+  - name: Create a logical volume lv2 the size of all remaining space in the volume group vg2
+    community.general.lvol:
+      vg: vg2
+      lv: lv2
+      size: 100%FREE
+      shrink: no
+  - name: Create a ext4 filesystem on /dev/mapper/vg1-lv1 and /dev/mapper/vg2-lv2
+    community.general.filesystem:
+      fstype: ext4
+      dev: /dev/mapper/vg1-lv1
+    loop:
+    - /dev/mapper/vg1-lv1
+    - /dev/mapper/vg2-lv2
+  - name: Mount up /dev/mapper/vg1-lv1 to /opt/mount1
+    ansible.posix.mount:
+      path: /opt/mount1
+      src: /dev/mapper/vg1-lv1
+      fstype: ext4
+      state: mounted
+  - name: Mount up /dev/mapper/vg2-lv2 to /opt/mount2
+    ansible.posix.mount:
+      path: /opt/mount2
+      src: /dev/mapper/vg2-lv2
+      fstype: ext4
+      state: mounted
+  - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa) for user hadoop
+    community.crypto.openssh_keypair:
+      path: /home/hadoop/.ssh/id_rsa
+  - name: Get ssh pub keys from nodes
+    ansible.builtin.fetch:
+      src: /home/hadoop/.ssh/id_rsa.pub
+      dest: /tmp/fetched
+  - name: show all the hosts matching the pattern, i.e. all but the group www
+    debug:
+      msg: "{{ item }}"
+    with_inventory_hostnames:
+      - all:headnode
+
+  - name: Add headnode to hosts
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      line: "{{ item }} headnode"
+      owner: root
+      group: root
+    with_inventory_hostnames:
+    - all:headnode
+  - name: Add worker to hosts
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      line: "{{ item }} worker"
+      owner: root
+      group: root
+    with_inventory_hostnames:
+    - all:worker
+
+  - name: Download hadoop-env.sh,core-site.xml,hdfs-site.xml,yarn-site.xml
+    get_url:
+      url: "{{ item }}"
+      dest: /usr/local/hadoop/current/etc/hadoop/
+    loop:
+    - https://gist.githubusercontent.com/rdaadr/2f42f248f02aeda18105805493bb0e9b/raw/6303e424373b3459bcf3720b253c01373666fe7c/hadoop-env.sh
+    - https://gist.githubusercontent.com/rdaadr/64b9abd1700e15f04147ea48bc72b3c7/raw/2d416bf137cba81b107508153621ee548e2c877d/core-site.xml
+    - https://gist.githubusercontent.com/rdaadr/2bedf24fd2721bad276e416b57d63e38/raw/640ee95adafa31a70869b54767104b826964af48/hdfs-site.xml
+    - https://gist.githubusercontent.com/Stupnikov-NA/ba87c0072cd51aa85c9ee6334cc99158/raw/bda0f760878d97213196d634be9b53a089e796ea/yarn-site.xml
+  - name: Set JAVA_HOME in hadoop-env.sh
+    ansible.builtin.lineinfile:
+      path: /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh
+      regexp: '^export JAVA_HOME='
+      line: export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk
+  - name: Set HADOOP_HOME in hadoop-env.sh
+    ansible.builtin.lineinfile:
+      path: /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh
+      regexp: '^export HADOOP_HOME='
+      line: export HADOOP_HOME=/usr/local/hadoop/current
+  - name: Set HADOOP_HEAPSIZE_MAX in hadoop-env.sh
+    ansible.builtin.lineinfile:
+      path: /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh
+      regexp: '^export HADOOP_HEAPSIZE_MAX='
+      line: export HADOOP_HEAPSIZE_MAX=512M
+  - name: Set hdfs namenode hostname in core-site.xml
+    ansible.builtin.replace:
+      path: /usr/local/hadoop/current/etc/hadoop/core-site.xml
+      regexp: '%HDFS_NAMENODE_HOSTNAME%'
+      replace: 'headnode'
+  - name: Set namenode-dirs in hdfs-site.xml
+    ansible.builtin.replace:
+      path: /usr/local/hadoop/current/etc/hadoop/hdfs-site.xml
+      regexp: '%NAMENODE_DIRS%'
+      replace: '/opt/mount1/namenode-dir,/opt/mount2/namenode-dir'
+  - name: Set datanode-dirs in hdfs-site.xml
+    ansible.builtin.replace:
+      path: /usr/local/hadoop/current/etc/hadoop/hdfs-site.xml
+      regexp: '%DATANODE_DIRS%'
+      replace: '/opt/mount1/datanode-dir,/opt/mount2/datanode-dir'
+  - name: Set resourcemanager hostname in yarn-site.xml
+    ansible.builtin.replace:
+      path: /usr/local/hadoop/current/etc/hadoop/yarn-site.xml
+      regexp: '%YARN_RESOURCE_MANAGER_HOSTNAME%'
+      replace: 'headnode'
+  - name: Set nodemanager-local-dir in yarn-site.xml
+    ansible.builtin.replace:
+      path: /usr/local/hadoop/current/etc/hadoop/yarn-site.xml
+      regexp: '%NODE_MANAGER_LOCAL_DIR%'
+      replace: '/opt/mount1/nodemanager-local-dir,/opt/mount2/nodemanager-local-dir'
+  - name: Set nodemanager-log-dir in yarn-site.xml
+    ansible.builtin.replace:
+      path: /usr/local/hadoop/current/etc/hadoop/yarn-site.xml
+      regexp: '%NODE_MANAGER_LOG_DIR%'
+      replace: '/opt/mount1/nodemanager-log-dir,/opt/mount2/nodemanager-log-dir'
+  - name: Set JAVA_HOME in /etc/profile.d/hadoop.sh
+    lineinfile:
+      path: /etc/profile.d/hadoop.sh
+      state: present
+      create: yes
+      line: HADOOP_HOME=/usr/local/hadoop/current
+      owner: root
+      group: root
+
+
+
+
+- hosts:
+   - headnode
+  gather_facts: yes
+  remote_user: exam
+  become: true
+  tasks:
+  - name: Set a hostname 
+    ansible.builtin.hostname:
+      name: "headnode"
+      use: systemd
+  - name: Create /opt/mount1/namenode-dir and /opt/mount2/namenode-dir dirs for Namenode files of HDFS service
+    ansible.builtin.file:
+      dest: "{{ item }}"
+      state: directory
+      owner: hdfs
+      group: hadoop
+    loop:
+    - /opt/mount1/namenode-dir
+    - /opt/mount2/namenode-dir
+  - name: Set authorized key taken from file
+    ansible.posix.authorized_key:
+      user: hadoop
+      state: present
+      key: "{{ lookup('file', '/tmp/fetched/{{ item }}/home/hadoop/.ssh/id_rsa.pub') }}"
+    with_inventory_hostnames:
+    - all:worker
+  - name: Create hadoop logs dir in /var/log/hadoop
+    ansible.builtin.file:
+      path: /var/log/hadoop
+      state: directory
+      owner: hadoop
+      group: hadoop
+      mode: '0775'
+  - name: Set hadoop logs dir to /var/log/hadoop in hadoop-env.sh
+    ansible.builtin.lineinfile:
+      path: /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh
+      regexp: '^# export HADOOP_LOG_DIR'
+      line: export HADOOP_LOG_DIR=/var/log/hadoop
+  - name: Format HDFS as hdfs user
+    command: echo Y | /usr/local/hadoop/current/bin/hdfs namenode -format cluster1
+    become: yes
+    become_user: hdfs
+    register: result
+  - name: Print return information from the previous task
+    ansible.builtin.debug:
+      var: result
+  - name: Copy namenode.service and resourcemanager.service to /etc/system.d/system/
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: /etc/system.d/system/
+      owner: root
+      group: root
+      mode: '0644'
+    loop:
+    - files/namenode.service
+    - files/resourcemanager.service
+  - name: Make sure services namenode and resourcemanager are running and enabled
+    ansible.builtin.systemd:
+      state: started
+      enabled: yes
+      name: "{{ item }}"
+    loop:
+    - namenode
+    - resourcemanager
+  - name: Allow incoming trafic to 8088 and 9870 tcp ports
+    ansible.posix.firewalld:
+      port: "{{ item }}/tcp"
+      permanent: yes
+      state: enabled
+    loop:
+    - 8088
+    - 9870
+
+- hosts:
+   - worker
+  gather_facts: yes
+  remote_user: exam
+  become: true
+  tasks:
+  - name: Set a hostname 
+    ansible.builtin.hostname:
+      name: "worker"
+      use: systemd
+  - name: Create /opt/mount1/datanode-dir and /opt/mount2/datanode-dir dirs for Datanode files of HDFS service
+    ansible.builtin.file:
+      dest: "{{ item }}"
+      state: directory
+      owner: hdfs
+      group: hadoop
+    loop:
+    - /opt/mount1/datanode-dir
+    - /opt/mount2/datanode-dir
+  - name: Create 4 additional directories for Nodemanager of YARN service
+    ansible.builtin.file:
+      dest: "{{ item }}"
+      state: directory
+      owner: yarn
+      group: hadoop
+    loop:
+    - /opt/mount1/nodemanager-local-dir
+    - /opt/mount2/nodemanager-local-dir
+    - /opt/mount1/nodemanager-log-dir
+    - /opt/mount2/nodemanager-log-dir
+  - name: Set authorized key taken from file
+    ansible.posix.authorized_key:
+      user: hadoop
+      state: present
+      key: "{{ lookup('file', '/tmp/fetched/{{ item }}/home/hadoop/.ssh/id_rsa.pub') }}"
+    with_inventory_hostnames:
+    - all:headnode
+  - name: Copy datanode.service and nodemanager.service to /etc/system.d/system/
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: /etc/system.d/system/
+      owner: root
+      group: root
+      mode: '0644'
+    loop:
+    - files/datanode.service
+    - files/nodemanager.service
+  - name: Make sure services datanode and nodemanager are running and enabled
+    ansible.builtin.systemd:
+      state: started
+      enabled: yes
+      name: "{{ item }}"
+    loop:
+    - datanode
+    - nodemanager
