@@ -1,0 +1,44 @@
+---
+- name: Create /opt/mount1/namenode-dir and /opt/mount2/namenode-dir dirs for Namenode files of HDFS service
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    owner: hdfs
+    group: hadoop
+  loop:
+  - /opt/mount1/namenode-dir
+  - /opt/mount2/namenode-dir
+- name: Format HDFS as hdfs user
+  command: echo Y | /usr/local/hadoop/current/bin/hdfs namenode -format cluster1
+  become: yes
+  become_user: hdfs
+  register: result
+- name: Print return information from the previous task
+  ansible.builtin.debug:
+    var: result
+- name: Copy namenode.service and resourcemanager.service to /etc/system.d/system/
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/system.d/system/
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+  - namenode.service
+  - resourcemanager.service
+- name: Make sure services namenode and resourcemanager are running and enabled
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "{{ item }}"
+  loop:
+  - namenode
+  - resourcemanager
+- name: Allow incoming trafic to 8088 and 9870 tcp ports
+  ansible.posix.firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+  loop:
+  - 8088
+  - 9870
