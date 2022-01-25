@@ -142,3 +142,53 @@ data blocks changed from 7285760 to 7547904
 ```
 2.7. Verify that after reboot your root device is still 1GB bigger than at 2.5.  
 I don't know where to fint it, it increased after lvextend, you can compare 1.7 and 2.5
+
+```
+[root@localhost superadmin]# vgs
+  VG     #PV #LV #SN Attr   VSize  VFree  
+  centos   2   2   0 wz--n- 32.90g 932.00m
+[root@localhost superadmin]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                 1.9G     0  1.9G   0% /dev
+tmpfs                    1.9G     0  1.9G   0% /dev/shm
+tmpfs                    1.9G   17M  1.9G   1% /run
+tmpfs                    1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/centos-root   29G  1.9G   27G   7% /
+/dev/vda1                1.9G   33M  1.9G   2% /backup
+/dev/sda1               1014M  215M  800M  22% /boot
+tmpfs                    379M     0  379M   0% /run/user/1000
+[root@localhost superadmin]# lvextend -L+900MB /dev/centos/root
+  Size of logical volume centos/root changed from 28.79 GiB (7371 extents) to 29.67 GiB (7596 extents).
+  Logical volume centos/root successfully resized.
+[root@localhost superadmin]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                 1.9G     0  1.9G   0% /dev
+tmpfs                    1.9G     0  1.9G   0% /dev/shm
+tmpfs                    1.9G   17M  1.9G   1% /run
+tmpfs                    1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/centos-root   29G  1.9G   27G   7% /
+/dev/vda1                1.9G   33M  1.9G   2% /backup
+/dev/sda1               1014M  215M  800M  22% /boot
+tmpfs                    379M     0  379M   0% /run/user/1000
+[root@localhost superadmin]# xfs_growfs /dev/centos/root
+meta-data=/dev/mapper/centos-root isize=512    agcount=5, agsize=1821440 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0 spinodes=0
+data     =                       bsize=4096   blocks=7547904, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=3557, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 7547904 to 7778304
+[root@localhost superadmin]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                 1.9G     0  1.9G   0% /dev
+tmpfs                    1.9G     0  1.9G   0% /dev/shm
+tmpfs                    1.9G   17M  1.9G   1% /run
+tmpfs                    1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/centos-root   30G  1.9G   28G   7% /
+/dev/vda1                1.9G   33M  1.9G   2% /backup
+/dev/sda1               1014M  215M  800M  22% /boot
+tmpfs                    379M     0  379M   0% /run/user/1000
+```
