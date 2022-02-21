@@ -287,7 +287,7 @@ After=network.target network-online.target
 [Service]
 User=yarn
 Group=hadoop
-Type=fork
+Type=simple
 ExecStart=/usr/local/hadoop/current/bin/yarn resourcemanager
 Restart=on-failure
 
@@ -303,7 +303,7 @@ After=network.target network-online.target
 [Service]
 User=hdfs
 Group=hadoop
-Type=fork
+Type=simple
 ExecStart=/usr/local/hadoop/current/bin/hdfs namenode
 Restart=on-failure
 
