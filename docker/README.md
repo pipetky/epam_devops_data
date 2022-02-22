@@ -58,5 +58,5 @@ Try to open in your browser:
 ### Contacts
 Aleksandr Karabchevskiy - pipetky@gmail.com
 
-Project Link: https://github.com/pipetky/epam_devops_data
+Project Link: https://github.com/pipetky/epam_devops_data  
 DockerHub Link: https://hub.docker.com/r/pipetky/hadoop
