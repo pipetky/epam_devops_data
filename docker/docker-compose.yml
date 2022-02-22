@@ -16,6 +16,8 @@ services:
   worker:
     hostname: worker
     image: pipetky/hadoop:worker
+    ports:
+      - "9864:9864"
     networks:
       - hadoop
     volumes:

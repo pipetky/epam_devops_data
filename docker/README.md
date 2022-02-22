@@ -49,6 +49,12 @@ You can also start service by runnig the docker-compose command:
 docker-compose up
 ```
 
+### Using:
+Try to open in your browser:
+[http://127.0.0.1:8088](http://127.0.0.1:8088)  
+[http://127.0.0.1:9870](http://127.0.0.1:9870)
+
+### Contacts
 Aleksandr Karabchevskiy - pipetky@gmail.com
 
 Project Link: https://github.com/pipetky/epam_devops_data
