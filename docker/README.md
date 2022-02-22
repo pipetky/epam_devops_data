@@ -50,7 +50,7 @@ docker-compose up
 ```
 
 ### Using:
-Try to open in your browser:
+Try to open in your browser:  
 [http://127.0.0.1:8088](http://127.0.0.1:8088)  
 [http://127.0.0.1:9870](http://127.0.0.1:9870)
 
