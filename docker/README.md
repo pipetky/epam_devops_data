@@ -20,6 +20,7 @@ Clone the repo and generate ssh keys::
 ```
 git clone --branch docker https://github.com/pipetky/epam_devops_data.git
 cd epam_devops_data/docker
+mkdir ssh_keys
 ssh-keygen -f ssh_keys/worker_id_rsa -N "" -C ""
 ssh-keygen -f ssh_keys/headnode_id_rsa -N "" -C ""
 ```
