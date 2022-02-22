@@ -1,0 +1,32 @@
+version: "3"
+services:
+  headnode:
+    hostname: headnode
+    image: pipetky/hadoop:headnode
+    ports:
+      - "9870:9870"
+      - "8088:8088"
+    networks:
+      - hadoop
+    volumes:
+      - headnode_1:/opt/mount1
+      - headnode_2:/opt/mount2
+
+
+  worker:
+    hostname: worker
+    image: pipetky/hadoop:worker
+    networks:
+      - hadoop
+    volumes:
+      - worker_1:/opt/mount1
+      - worker_2:/opt/mount2
+
+volumes:
+  headnode_1:
+  headnode_2:
+  worker_1:
+  worker_2:
+
+networks:
+  hadoop:
