@@ -32,9 +32,9 @@ chown hadoop:hadoop /var/log/hadoop/ && \
 chmod 775 /var/log/hadoop/ && \
 sed -i 's|^# export HADOOP_LOG_DIR.*$|export HADOOP_LOG_DIR=/var/log/hadoop|' /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh && \
 mkdir /run/sshd
-COPY ssh_keys/worker_id_rsa /home/hadoop/.ssh/id_rsa
-COPY ssh_keys/worker_id_rsa.pub /home/hadoop/.ssh/id_rsa.pub
-COPY ssh_keys/headnode_id_rsa.pub /home/hadoop/.ssh/
-RUN cat /home/hadoop/.ssh/headnode_id_rsa.pub >> /home/hadoop/.ssh/authorized_keys && \
+COPY ["ssh_keys/worker_id_rsa", "ssh_keys/worker_id_rsa.pub", "ssh_keys/headnode_id_rsa.pub", "/home/hadoop/.ssh/"]
+RUN mv /home/hadoop/.ssh/worker_id_rsa.pub /home/hadoop/.ssh/id_rsa.pub && \
+mv /home/hadoop/.ssh/worker_id_rsa /home/hadoop/.ssh/id_rsa && \
+cat /home/hadoop/.ssh/headnode_id_rsa.pub >> /home/hadoop/.ssh/authorized_keys && \
 chown hadoop:hadoop /home/hadoop/.ssh/* 
 ENTRYPOINT ./worker_start.sh
