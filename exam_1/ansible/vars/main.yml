@@ -1,0 +1,10 @@
+JAVA_HOME: /usr/lib/jvm/jre-1.8.0-openjdk
+HADOOP_HOME: /usr/local/hadoop/current
+HADOOP_HEAPSIZE_MAX: 512M
+HDFS_NAMENODE_HOSTNAME: 'headnode'
+NAMENODE_DIRS: '/opt/mount1/namenode-dir,/opt/mount2/namenode-dir'
+DATANODE_DIRS: '/opt/mount1/datanode-dir,/opt/mount2/datanode-dir'
+YARN_RESOURCE_MANAGER_HOSTNAME: 'headnode'
+NODE_MANAGER_LOCAL_DIR: '/opt/mount1/nodemanager-local-dir,/opt/mount2/nodemanager-local-dir'
+NODE_MANAGER_LOG_DIR: '/opt/mount1/nodemanager-log-dir,/opt/mount2/nodemanager-log-dir'
+

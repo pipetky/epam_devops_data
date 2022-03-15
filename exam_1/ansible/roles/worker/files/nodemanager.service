@@ -1,0 +1,13 @@
+[Unit]
+Description=Hadoop nodemanager
+After=network.target network-online.target
+
+[Service]
+User=yarn
+Group=hadoop
+Type=fork
+ExecStart=/usr/local/hadoop/current/bin/yarn nodemanager
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

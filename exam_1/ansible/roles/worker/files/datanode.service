@@ -1,0 +1,13 @@
+[Unit]
+Description=Hadoop datanode
+After=network.target network-online.target
+
+[Service]
+User=hdfs
+Group=hadoop
+Type=fork
+ExecStart=/usr/local/hadoop/current/bin/hdfs datanode
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

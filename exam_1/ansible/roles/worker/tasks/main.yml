@@ -1,0 +1,47 @@
+---
+- name: Create /opt/mount1/datanode-dir and /opt/mount2/datanode-dir dirs for Datanode files of HDFS service
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    owner: hdfs
+    group: hadoop
+  loop:
+  - /opt/mount1/datanode-dir
+  - /opt/mount2/datanode-dir
+- name: Create 4 additional directories for Nodemanager of YARN service
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    owner: yarn
+    group: hadoop
+  loop:
+  - /opt/mount1/nodemanager-local-dir
+  - /opt/mount2/nodemanager-local-dir
+  - /opt/mount1/nodemanager-log-dir
+  - /opt/mount2/nodemanager-log-dir
+
+- name: Copy datanode.service and nodemanager.service to /etc/system.d/system/
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+  - datanode.service
+  - nodemanager.service
+- name: Make sure services datanode and nodemanager are running and enabled
+  ansible.builtin.systemd:
+    state: started
+    enabled: yes
+    name: "{{ item }}"
+  loop:
+  - datanode
+  - nodemanager
+- name: Allow incoming trafic to 8088 and 9870 tcp ports
+  ansible.posix.firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+  loop:
+  - 9864

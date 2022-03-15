@@ -1,0 +1,18 @@
+all:
+  children:
+    hadoop:
+      children:
+        headnodes:
+          hosts:
+            headnode:
+              vars: 
+                ansible_host: 192.168.3.100
+        workers:
+          hosts:
+            worker:
+              vars: 
+                ansible_host: 192.168.3.101
+            worker-1:
+              vars: 
+                ansible_host: 192.168.3.102
+
