@@ -5,7 +5,15 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 COPY worker_start.sh /
 RUN apt update -y && \
 apt install -y openssh-client openssh-server wget sudo openjdk-8-jdk && \
-chmod +x worker_start.sh && \
+wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz && \
+tar xvzf hadoop-3.1.2.tar.gz -C /opt/ && \
+mkdir /usr/local/hadoop && \
+ln -s /opt/hadoop-3.1.2 /usr/local/hadoop/current && \
+wget -O /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh https://gist.githubusercontent.com/rdaadr/2f42f248f02aeda18105805493bb0e9b/raw/6303e424373b3459bcf3720b253c01373666fe7c/hadoop-env.sh && \
+wget -O /usr/local/hadoop/current/etc/hadoop/core-site.xml https://gist.githubusercontent.com/rdaadr/64b9abd1700e15f04147ea48bc72b3c7/raw/2d416bf137cba81b107508153621ee548e2c877d/core-site.xml && \
+wget -O /usr/local/hadoop/current/etc/hadoop/hdfs-site.xml https://gist.githubusercontent.com/rdaadr/2bedf24fd2721bad276e416b57d63e38/raw/640ee95adafa31a70869b54767104b826964af48/hdfs-site.xml && \
+wget -O /usr/local/hadoop/current/etc/hadoop/yarn-site.xml https://gist.githubusercontent.com/Stupnikov-NA/ba87c0072cd51aa85c9ee6334cc99158/raw/bda0f760878d97213196d634be9b53a089e796ea/yarn-site.xml
+RUN chmod +x worker_start.sh && \
 groupadd hadoop && \
 useradd -m -g hadoop hadoop && \
 useradd -g hadoop yarn && \
@@ -14,14 +22,6 @@ mkdir -p /opt/mount{1,2}/datanode-dir && \
 chown hdfs:hadoop /opt/mount{1,2}/datanode-dir && \
 mkdir /opt/mount{1,2}/{nodemanager-local-dir,nodemanager-log-dir} && \
 chown yarn:hadoop /opt/mount{1,2}/{nodemanager-local-dir,nodemanager-log-dir} && \
-wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz && \
-tar xvzf hadoop-3.1.2.tar.gz -C /opt/ && \
-mkdir /usr/local/hadoop && \
-ln -s /opt/hadoop-3.1.2 /usr/local/hadoop/current && \
-wget -O /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh https://gist.githubusercontent.com/rdaadr/2f42f248f02aeda18105805493bb0e9b/raw/6303e424373b3459bcf3720b253c01373666fe7c/hadoop-env.sh && \
-wget -O /usr/local/hadoop/current/etc/hadoop/core-site.xml https://gist.githubusercontent.com/rdaadr/64b9abd1700e15f04147ea48bc72b3c7/raw/2d416bf137cba81b107508153621ee548e2c877d/core-site.xml && \
-wget -O /usr/local/hadoop/current/etc/hadoop/hdfs-site.xml https://gist.githubusercontent.com/rdaadr/2bedf24fd2721bad276e416b57d63e38/raw/640ee95adafa31a70869b54767104b826964af48/hdfs-site.xml && \
-wget -O /usr/local/hadoop/current/etc/hadoop/yarn-site.xml https://gist.githubusercontent.com/Stupnikov-NA/ba87c0072cd51aa85c9ee6334cc99158/raw/bda0f760878d97213196d634be9b53a089e796ea/yarn-site.xml && \
 sed -i -e 's|^export JAVA_HOME=.*$|export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64|' -e 's|^export HADOOP_HOME=.*$|export HADOOP_HOME=/usr/local/hadoop/current|' -e 's|^export HADOOP_HEAPSIZE_MAX=.*$|export HADOOP_HEAPSIZE_MAX=512M|' /usr/local/hadoop/current/etc/hadoop/hadoop-env.sh && \
 sed -i 's|%HDFS_NAMENODE_HOSTNAME%|headnode|' /usr/local/hadoop/current/etc/hadoop/core-site.xml && \
 sed -i -e 's|%NAMENODE_DIRS%|/opt/mount1/namenode-dir,/opt/mount2/namenode-dir|' -e 's|%DATANODE_DIRS%|/opt/mount1/datanode-dir,/opt/mount2/datanode-dir|' /usr/local/hadoop/current/etc/hadoop/hdfs-site.xml && \
