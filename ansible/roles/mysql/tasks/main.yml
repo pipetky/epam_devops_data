@@ -1,0 +1,21 @@
+---
+- name: Install mariadb-server and MySQL-python
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - mariadb-server-5.5.68-1.el7
+    - MySQL-python
+  notify:
+  - Restart mariadb
+- name: Create a new database with name 'epam'
+  community.mysql.mysql_db:
+    name: epam
+    state: present
+- name: Create user epam_user with all database privileges and 'WITH GRANT OPTION' in epam
+  community.mysql.mysql_user:
+    state: present
+    name: epam_user
+    password: 12345dd
+    priv: 'epam.*:ALL,GRANT'

@@ -1,0 +1,16 @@
+---
+- name: Install ntp
+  yum:
+    name: ntp-4.2.6p5-29.el7.centos.2
+    state: present
+- name: copy ntp config
+  ansible.builtin.copy:
+    src: ntp.conf
+    dest: /etc/ntp.conf
+  notify:
+  - Restart ntpd
+- name: Allow incoming trafic to 123 udp port
+  ansible.posix.firewalld:
+    port: "123/udp"
+    permanent: yes
+    state: enabled
