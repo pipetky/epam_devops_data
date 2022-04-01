@@ -1,0 +1,49 @@
+---
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+- name: Install nginx
+  yum:
+    name: nginx
+    state: present
+
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+
+- name: Allow incoming trafic to 80 tcp port
+  ansible.posix.firewalld:
+    port: "80/tcp"
+    permanent: yes
+    state: enabled
+
+- name: Create project dir
+  ansible.builtin.file:
+    path: '/var/www-data/{{ domain }}/'
+    state: directory
+    mode: '0755'
+    owner: nginx
+    group: nginx
+
+- name: Copy static html
+  ansible.builtin.copy:
+    src: test.html
+    dest: "/var/www-data/{{ domain }}/"
+    mode: '0644'
+    owner: nginx
+    group: nginx
+
+
+- name: Template example.com.conf nginx
+  ansible.builtin.template:
+    src: example.com.conf.j2
+    dest: /etc/nginx/conf.d/example.com.conf
+  notify:
+  - reload nginx
+
+
+
+
+
+

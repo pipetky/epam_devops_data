@@ -1,0 +1,10 @@
+---
+- name: Add the user 'superadmin' in primary group of 'wheel'
+  ansible.builtin.user:
+      name: superadmin
+      comment: Super Admin
+      group: wheel
+- name: Upgrade all packages
+  yum:
+      name: '*'
+      state: latest

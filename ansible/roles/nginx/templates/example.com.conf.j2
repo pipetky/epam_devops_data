@@ -1,0 +1,11 @@
+
+server {
+		listen 80;
+                listen [::]:80;
+		root /var/www-data/{{ domain }}/;
+                index index.html index.htm test.html;                
+                server_name {{ domain }};
+                location / {
+                        try_files $uri $uri/ =404;
+                        }
+	}

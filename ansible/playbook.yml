@@ -1,0 +1,14 @@
+---
+- hosts:
+   - epam
+  gather_facts: False
+  remote_user: localadmin
+  become: yes 
+  become_user: root
+  become_method: sudo
+  roles:
+  - common
+  - ntp
+  - mysql
+  - nginx
+  - docker
